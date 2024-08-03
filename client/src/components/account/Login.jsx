@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Box, TextField, Button, styled, Typography } from '@mui/material';
-
+import { API } from '../../service/api.js';
 const Component = styled(Box)`
     width: 400px;
     margin: auto;
@@ -72,7 +72,9 @@ const Login = () => {
             ...signup, [e.target.name]: e.target.value
         })
     }
-
+    const signupUser =async () => {
+        let response = await API.userSignup(signup);
+    }
 
     return (
         <Component>
@@ -95,7 +97,7 @@ const Login = () => {
                             <TextField variant="standard" onChange={(e) => onTextChange(e)} name="name" label='Enter Name' />
                             <TextField variant="standard" onChange={(e) => onTextChange(e)} name="username" label='Enter Username' />
                             <TextField variant="standard" onChange={(e) => onTextChange(e)} name-="password" label='Enter Password' />
-                            <SignUpButton variant="text">SignUp</SignUpButton>
+                            <SignUpButton variant="text" onClick={() => signupUser()}>SignUp</SignUpButton>
                             <Text style={({ textAlign: 'centre' })}>
                                 OR
                             </Text>
