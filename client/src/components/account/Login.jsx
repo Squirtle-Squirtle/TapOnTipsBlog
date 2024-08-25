@@ -4,6 +4,8 @@ import { Box, TextField, Button, styled, Typography } from '@mui/material';
 import { API } from '../../service/api.js';
 import { DataContext } from '../../context/DataProvider.jsx';
 
+
+import { useNavigate } from 'react-router-dom';
 const Component = styled(Box)`
     width: 400px;
     margin: auto;
@@ -89,7 +91,7 @@ const Login = () => {
     const [login, setLogin] = useState(LoginInitValues);
 
     const {setAccount}=useContext(DataContext);
-
+    const navigate=useNavigate();
     const onTextChange = (e) => {
         // console.log(e.target.name,e.target.value);
         setsignup({
@@ -124,6 +126,7 @@ const Login = () => {
             sessionStorage.setItem('accessToken',`Bearer ${response.data.accesstoken}`);
             sessionStorage.setItem('refreshToken',`Bearer ${response.data.refreshtoken}`);
             setAccount({username: response.data.username,name: response.data.name });
+            navigate('/');
         }
         else
         {
