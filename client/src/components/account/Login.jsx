@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 
 import { Box, TextField, Button, styled, Typography } from '@mui/material';
 import { API } from '../../service/api.js';
+import { DataContext } from '../../context/DataProvider.jsx';
+
 const Component = styled(Box)`
     width: 400px;
     margin: auto;
@@ -53,7 +55,22 @@ const SignupInitValues = {
     name: "",
     username: "",
     password: ""
-}
+};
+
+const LoginInitValues = {
+    username: "",
+    password: ""
+};
+
+const Error = styled(Typography)`
+font-size: 10px;
+color:#ff6161;
+line-height:0;
+margin-top: 10px;
+font-weight:600;
+`
+
+
 
 const Login = () => {
     const loginLogo = 'https://www.sesta.it/wp-content/uploads/2021/03/logo-blog-sesta-trasparente.png';
@@ -63,17 +80,56 @@ const Login = () => {
 
     const [signup, setsignup] = useState(SignupInitValues);
 
+    const [error, setError] = useState('');
+
     const toggleSignup = () => {
         account === 'signup' ? toggleAccount('login') : toggleAccount('signup');
     }
 
+    const [login, setLogin] = useState(LoginInitValues);
+
+    const {setAccount}=useContext(DataContext);
+
     const onTextChange = (e) => {
+        // console.log(e.target.name,e.target.value);
         setsignup({
             ...signup, [e.target.name]: e.target.value
         })
     }
-    const signupUser =async () => {
+    const signupUser = async () => {
         let response = await API.userSignup(signup);
+        // console.log(`{Hello Res ${response}}`);
+        if (response.isSucess) {
+            setError('');
+            setsignup(SignupInitValues);
+            toggleAccount('login');
+
+        }
+        else {
+            setError('Something Went Wrong!!!');
+        }
+    }
+
+    const onValueChange = (e) => {
+        // console.log(e.target.name,e.target.value);
+        setLogin({ ...login, [e.target.name]: e.target.value })
+    }
+
+    const loginUser = async () => {
+        let response = await API.userLogin(login);
+        if(response.isSucess)
+        {
+            console.log(`Inside 1`);
+            setError('');
+            sessionStorage.setItem('accessToken',`Bearer ${response.data.accesstoken}`);
+            sessionStorage.setItem('refreshToken',`Bearer ${response.data.refreshtoken}`);
+            setAccount({username: response.data.username,name: response.data.name });
+        }
+        else
+        {
+            console.log(`Inside2`);
+            setError('Something went Wrong!!');
+        }
     }
 
     return (
@@ -83,9 +139,12 @@ const Login = () => {
                 {
                     account === 'login' ?
                         <Wrapper>
-                            <TextField variant="standard" label='Enter Username' />
-                            <TextField variant="standard" label='Enter Password' />
-                            <LoginButton variant="contained">Login</LoginButton>
+                            <TextField variant="standard" label='Enter Username' onChange={(e) => onValueChange(e)} name='username' />
+                            <TextField variant="standard" label='Enter Password' onChange={(e) => onValueChange(e)} name='password' />
+                            {
+                                error && <Error>{error}</Error>
+                            }
+                            <LoginButton variant="contained" onClick={() => loginUser()}>Login</LoginButton>
                             <Text style={({ textAlign: 'centre' })}>
                                 OR
                             </Text>
@@ -94,9 +153,12 @@ const Login = () => {
 
                         :
                         <Wrapper>
-                            <TextField variant="standard" onChange={(e) => onTextChange(e)} name="name" label='Enter Name' />
-                            <TextField variant="standard" onChange={(e) => onTextChange(e)} name="username" label='Enter Username' />
-                            <TextField variant="standard" onChange={(e) => onTextChange(e)} name-="password" label='Enter Password' />
+                            <TextField variant="standard" onChange={(e) => onTextChange(e)} name="name" label='Enter Name' required />
+                            <TextField variant="standard" onChange={(e) => onTextChange(e)} name="username" label='Enter Username' required />
+                            <TextField variant="standard" onChange={(e) => onTextChange(e)} name="password" label='Enter Password' required />
+                            {
+                                error && <Error>{error}</Error>
+                            }
                             <SignUpButton variant="text" onClick={() => signupUser()}>SignUp</SignUpButton>
                             <Text style={({ textAlign: 'centre' })}>
                                 OR

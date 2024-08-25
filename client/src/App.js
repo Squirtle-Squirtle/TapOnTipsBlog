@@ -1,12 +1,15 @@
-import logo from './logo.svg';
 import './App.css';
-
-import Login from './components/account/Login'
-
+import DataProvider from './context/DataProvider.jsx';
+import Login from './components/account/Login.jsx'
+import Home from './components/home/Home.jsx';
 function App() {
   return (
-    <div style={{marginTop:'64px'}}>
+    <div style={{ marginTop: '64px' }}>
+      <DataProvider>
         <Login />
+        <Home />
+      </DataProvider>
+
     </div>
   );
 }

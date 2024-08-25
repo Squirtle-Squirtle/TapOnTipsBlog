@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import { API_NOTIFICATION_MESSAGES, SERVICE_URLS } from '../constants/config.js';
-import { responsiveFontSizes } from '@mui/material';
 
 const API_URL = "http://localhost:8080";
 
@@ -30,7 +29,7 @@ axiosInstance.interceptors.response.use(
     },
     function (error) {
         //stop global loader
-        return Promise.reject(processError(error));
+        return (processError(error));
     }
 )
 
@@ -39,7 +38,8 @@ axiosInstance.interceptors.response.use(
 // if fail -> return {isFailure: true, status:string ,msg: string , code:int}
 
 const processRespnose = (response) => {
-    if (response?.status == 200) {
+    console.log(response);
+    if (response?.status === 200) {
         return {
             isSucess: true,
             data: response.data
@@ -56,24 +56,26 @@ const processRespnose = (response) => {
 }
 
 const processError = (error) => {
+    console.log(`Error`);
     if (error.response) {
-        console.log(`Error in response: `, error.toJSON());
+        // Server responded with a status other than 2xx
+        console.log(`Error in response: `, error.response);
         return {
             isError: true,
             msg: API_NOTIFICATION_MESSAGES.responseFailure,
             code: error.response.status
         }
-    }
-    else if (error.request) {
-        console.log(`Error in request: `, error.toJSON());
+    } else if (error.request) {
+        // Request was made but no response received
+        console.log(`Error in request: `, error.request);
         return {
             isError: true,
-            msg: API_NOTIFICATION_MESSAGES.responseFailure,
+            msg: API_NOTIFICATION_MESSAGES.requestFailure,
             code: ""
         }
-    }
-    else {
-        console.log(`Error in network: `, error.toJSON());
+    } else {
+        // Something else happened in setting up the request
+        console.log(`Error in network: `, error.message);
         return {
             isError: true,
             msg: API_NOTIFICATION_MESSAGES.networkError,
@@ -85,7 +87,7 @@ const processError = (error) => {
 const API = {};
 
 for (const [key, value] of Object.entries(SERVICE_URLS)) {
-    API[key] = (body, showUploadProgress, showDownloadProgress) => {
+    API[key] = (body, showUploadProgress, showDownloadProgress) =>
         axiosInstance({
             method: value.method,
             url: value.url,
@@ -103,9 +105,7 @@ for (const [key, value] of Object.entries(SERVICE_URLS)) {
                     showDownloadProgress(percentageCompleted);
                 }
             }
-        }
-        )
-    }
+        });
 }
 
-export {API};
+export { API };
