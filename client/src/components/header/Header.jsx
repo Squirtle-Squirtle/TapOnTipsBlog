@@ -1,6 +1,8 @@
 
 import { AppBar, Toolbar, Typography } from "@mui/material";
 
+import { Link } from "react-router-dom";
+
 
 const cmp1 = {
     background: "#FFFFFF",
@@ -10,8 +12,10 @@ const cmp1 = {
 
 const cont = {
     justifyContent: "center",
-    "& > p": {
+    "& > a": {
       padding: "20px",
+      textDecoration: "none",
+      color: "#000"
     },
   };
   
@@ -20,10 +24,10 @@ const Header = () => {
     return (
         <AppBar sx={cmp1}>
             <Toolbar sx={cont}>
-                <Typography>Home</Typography>
-                <Typography>About</Typography>
-                <Typography>Contact</Typography>
-                <Typography>Logout</Typography>
+                <Link to='/'>Home</Link>
+                <Link to='/about'>About</Link>
+                <Link to='/contact'>Contact</Link>
+                <Link to='/login'>Logout</Link>
                 {/* <Typography>Home</Typography> */}
             </Toolbar>
         </AppBar>

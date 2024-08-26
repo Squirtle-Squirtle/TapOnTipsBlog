@@ -74,7 +74,7 @@ font-weight:600;
 
 
 
-const Login = () => {
+const Login = ({isUserAuthenticated}) => {
     const loginLogo = 'https://www.sesta.it/wp-content/uploads/2021/03/logo-blog-sesta-trasparente.png';
 
 
@@ -127,6 +127,7 @@ const Login = () => {
             sessionStorage.setItem('refreshToken',`Bearer ${response.data.refreshtoken}`);
             setAccount({username: response.data.username,name: response.data.name });
             navigate('/');
+            isUserAuthenticated(true);
         }
         else
         {
